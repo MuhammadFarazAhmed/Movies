@@ -27,6 +27,10 @@ mockitoInline = "3.11.2"
 mockitoKotlin = "4.0.0"
 kotlinxCoroutines = "1.7.1"
 androidxArchCore = "2.2.0"
+appcompat = "1.7.0"
+material = "1.12.0"
+detekt = "1.23.6"
+
 
 
 
@@ -102,6 +106,8 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav_version" }
 
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose_version" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 
@@ -109,8 +115,10 @@ material-icons-extended = { module = "androidx.compose.material:material-icons-e
 
 
 [plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
 

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.medicinetracker"
+    namespace = "com.example.movies"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.medicinetracker"
+        applicationId = "com.example.movies"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

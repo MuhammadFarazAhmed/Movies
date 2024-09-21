@@ -1,23 +1,44 @@
 package com.example.movies.di
 
 import android.util.Log
-import com.example.movies.common.NetworkStatusTracker
-import io.ktor.client.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.plugins.observer.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.gson.*
-import org.koin.android.ext.koin.androidApplication
-import org.koin.core.module.Module
+import com.example.data.mapper.MovieMapper
+import com.example.data.movies.datasource.LocalMoviesDataSource
+import com.example.data.movies.datasource.MoviesDataSource
+import com.example.data.movies.datasource.RemoteMoviesDataSource
+import com.example.data.movies.repositories.MoviesRepositoryImp
+import com.example.domain.repositories.MovieRepository
+import com.example.domain.usecase.SearchMoviesUseCase
+import com.example.movies.BuildConfig
+import com.example.movies.vm.SearchMoviesViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.observer.ResponseObserver
+import io.ktor.client.request.HttpRequest
+import io.ktor.client.request.accept
+import io.ktor.http.ContentType
+import io.ktor.http.URLProtocol
+import io.ktor.http.contentType
+import io.ktor.serialization.gson.gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+fun featureModules() = listOf(mediaModule)
 
-fun featureModules() = listOf<Module>()
-
+val AppModule = module {
+    single { Dispatchers.IO }
+    single { CoroutineScope(get()) }
+}
 
 val NetworkModule = module {
     single {
@@ -27,6 +48,8 @@ val NetworkModule = module {
                 url {
                     contentType(ContentType.Application.Json)
                     accept(ContentType.Application.Json)
+                    protocol = URLProtocol.HTTPS
+                    host = BuildConfig.API_URL
                 }
             }
 
@@ -35,6 +58,17 @@ val NetworkModule = module {
             install(ContentNegotiation) {
                 gson {
                     serializeNulls()
+                }
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(
+                            BuildConfig.TMDB_TOKEN,
+                            BuildConfig.TMDB_TOKEN
+                        )
+                    }
                 }
             }
 
@@ -64,3 +98,23 @@ val NetworkModule = module {
     }
 }
 
+val mediaModule = module {
+    single { MovieMapper() }
+
+    single<MoviesDataSource>(named("LocalMoviesDataSource")) { LocalMoviesDataSource() }
+
+    single<MoviesDataSource>(named("RemoteMoviesDataSource")) { RemoteMoviesDataSource(get()) }
+
+    single<MovieRepository> {
+        MoviesRepositoryImp(
+            movieMapper = get(),
+            ioDispatcher = get(),
+            remoteMoviesDataSource = get(named("RemoteMoviesDataSource")),
+            localMoviesDataSource = get(named("LocalMoviesDataSource")),
+        )
+    }
+
+    single { SearchMoviesUseCase(get()) }
+
+    viewModel { SearchMoviesViewModel(get()) }
+}

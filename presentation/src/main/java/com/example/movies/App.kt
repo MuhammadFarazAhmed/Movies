@@ -1,6 +1,7 @@
 package com.example.movies
 
 import android.app.Application
+import com.example.movies.di.AppModule
 import com.example.movies.di.NetworkModule
 import com.example.movies.di.featureModules
 import org.koin.android.ext.koin.androidContext
@@ -15,7 +16,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(NetworkModule + featureModules())
+            modules(AppModule + NetworkModule + featureModules())
         }
     }
 }

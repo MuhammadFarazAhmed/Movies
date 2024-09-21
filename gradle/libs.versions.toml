@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.0"
+detektFormatting = "1.22.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 espressoCore = "3.6.1"
@@ -26,6 +27,8 @@ mockitoCore = "4.0.0"
 mockitoInline = "3.11.2"
 mockitoKotlin = "4.0.0"
 kotlinxCoroutines = "1.7.1"
+pagingCommonKtx = "3.3.2"
+pagingCompose = "3.3.2"
 androidxArchCore = "2.2.0"
 appcompat = "1.7.0"
 material = "1.12.0"
@@ -38,6 +41,7 @@ detekt = "1.23.6"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormatting" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 ktor-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientMock" }
@@ -110,6 +114,10 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
+
+# Paging
+paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "pagingCommonKtx" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 
 
 

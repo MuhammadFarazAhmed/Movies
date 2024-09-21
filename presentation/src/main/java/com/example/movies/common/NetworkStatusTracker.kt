@@ -12,31 +12,28 @@ sealed class NetworkStatus {
 }
 
 class NetworkStatusTracker(context: Context) {
-    
     private val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkStatus = callbackFlow {
         val networkStatusCallback = object : ConnectivityManager.NetworkCallback() {
-            
+
             override fun onUnavailable() {
-               launch { send(NetworkStatus.Unavailable) }
+                launch { send(NetworkStatus.Unavailable) }
             }
-            
+
             override fun onAvailable(network: Network) {
-                launch { send(NetworkStatus.Available)}
+                launch { send(NetworkStatus.Available) }
             }
-            
+
             override fun onLost(network: Network) {
                 launch { send(NetworkStatus.Unavailable) }
             }
         }
-        
+
         val request = NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
         connectivityManager.registerNetworkCallback(request, networkStatusCallback)
-        
         awaitClose {
             connectivityManager.unregisterNetworkCallback(networkStatusCallback)
         }
@@ -46,7 +43,7 @@ class NetworkStatusTracker(context: Context) {
 inline fun <Result> Flow<NetworkStatus>.map(
     crossinline onUnavailable: () -> Result,
     crossinline onAvailable: suspend () -> Result,
-                                           ): Flow<Result> = map { status ->
+): Flow<Result> = map { status ->
     when (status) {
         NetworkStatus.Unavailable -> onUnavailable()
         NetworkStatus.Available -> onAvailable()

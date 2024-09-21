@@ -32,7 +32,9 @@ android {
             )
         }
         debug {
-            buildConfigField("String", "API_URL", "\"run.mocky.io/v3\"")
+            buildConfigField("String", "API_URL", "\"api.themoviedb.org\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"https://image.tmdb.org/t/p/w200\"")
+            buildConfigField("String", "TMDB_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NmFkMzRiZGU4NjM1MTVkNzE4YzYzZTY4OGMxYzE0NCIsIm5iZiI6MTcyNjcwMDg2MC4yOTgzNjUsInN1YiI6IjU3ZjkwMjZkYzNhMzY4NTA5NDAwMjM3NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rWqF5So6ptqs8dydFo_s6RTz_xMGZeVWcsCHL2LvApk\"")
         }
     }
 
@@ -59,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -94,6 +97,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compat)
+
+    // Paging
+    implementation(libs.paging.compose)
 
     //Room
     implementation(libs.room.runtime)

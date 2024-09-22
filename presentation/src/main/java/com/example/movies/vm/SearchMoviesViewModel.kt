@@ -33,12 +33,12 @@ class SearchMoviesViewModel(
             job.cancel()
             searchMedia()
         }
+
         this.query.value = query
 
         _uiState.update {
             it.copy(loading = false, media = mapOf())
         }
-
         if (query.isEmpty()) {
             _uiState.update { it.copy(defaultState = true) }
         }
@@ -58,7 +58,7 @@ class SearchMoviesViewModel(
                 .collectLatest { query ->
                     searchMoviesUseCase(
                         query = query,
-                        maxPageThresholds = 50 // This is where we changes data fetches to our needs
+                        maxPageThresholds = 50 // This is where we changes data fetches to our needs , currently getting 50 pages
                     ).collectLatest { data ->
                         updateMediaList(data)
                     }

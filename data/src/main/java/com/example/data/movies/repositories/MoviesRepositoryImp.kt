@@ -1,5 +1,6 @@
 package com.example.data.movies.repositories
 
+import android.util.Log
 import com.example.data.mapper.MovieMapper
 import com.example.data.model.Result
 import com.example.data.model.SearchMoviesInput
@@ -11,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlin.math.min
 
@@ -55,6 +57,8 @@ class MoviesRepositoryImp(
                 // Move to the next batch of 10
                 page += 10
             }
+        }.catch { _ ->
+            emit(emptyList())
         }
 
     private suspend fun fetchBatchPages(

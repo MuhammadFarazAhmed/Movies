@@ -56,7 +56,6 @@ fun MediaDetailsPage(
     MovieDetailsScreen(state, mainNavController)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailsScreen(
     state: MovieDetailsState,

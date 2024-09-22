@@ -16,6 +16,7 @@ class RemoteMoviesDataSource(
         return httpClient.get {
             url { path("3/search/multi") }
             parameter("query", input.query)
+            parameter("include_adult", true)
             parameter("page", input.page.toString())
         }.body<SearchMoviesResponse>()
 

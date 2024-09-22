@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.map
 
 class MovieMapper {
 
+    // Converting server models to domain models . from here the domain models will used.
+    // will become flexible if server changes anything we dont have to change ahead of our domain layer
     fun map(media: Flow<List<Result>>): Flow<List<Media>> =
         media.map { item -> item.map { media -> media.toDomain() } }
 

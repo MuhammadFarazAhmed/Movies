@@ -12,6 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.math.max
 
 class MoviesRepositoryImp(
     private val movieMapper: MovieMapper,
@@ -20,33 +21,41 @@ class MoviesRepositoryImp(
     private val localMoviesDataSource: MoviesDataSource
 ) : MovieRepository {
 
-    override fun searchMovies(query: String): Flow<List<Media>> {
+    override fun searchMovies(query: String, maxPageThreshold: Int): Flow<List<Media>> {
         // Convert it to domain model from server model
-        return movieMapper.map(fetchPaginatedData(query))
+        return movieMapper.map(fetchPaginatedData(query, maxPageThreshold))
     }
 
-    private fun fetchPaginatedData(query: String): Flow<List<Result>> = flow {
-        // Hit first time api to get total pages from response
-        val firstPageResponse =
-            remoteMoviesDataSource.searchMovies(SearchMoviesInput(query = query))
-        val totalPages =
-            firstPageResponse.totalPages
+    private fun fetchPaginatedData(query: String, maxPageThreshold: Int): Flow<List<Result>> =
+        flow {
+            // Hit first time api to get total pages from response
+            val firstPageResponse =
+                remoteMoviesDataSource.searchMovies(SearchMoviesInput(query = query))
+            val totalPages = firstPageResponse.totalPages
 
-        emit(firstPageResponse.results)
+            emit(firstPageResponse.results)
 
-        // Once we get total pages . now we call api in  batch of 10 to get results and emit data accordingly
-        var page = 2
-        while (page <= totalPages) {
-            val currentBatch =
-                fetchBatchPages(remoteMoviesDataSource, query, page, minOf(page + 9, totalPages))
+            // Once we get total pages . now we call api in  batch of 10 to get results and emit data accordingly
+            var page = 2
 
-            // Emit the data of the current batch
-            emit(currentBatch)
+            // Set MaxPageThreshold to prevent exhaustion of api calls.
+            val endPage = if (totalPages <= maxPageThreshold) totalPages else maxPageThreshold
+            while (page <= endPage) {
+                val currentBatch =
+                    fetchBatchPages(
+                        remoteMoviesDataSource,
+                        query,
+                        page,
+                        minOf(page + 9, endPage)
+                    )
 
-            // Move to the next batch
-            page += 10
+                // Emit the data of the current batch
+                emit(currentBatch)
+
+                // Move to the next batch of 10
+                page +=  10
+            }
         }
-    }
 
     private suspend fun fetchBatchPages(
         remoteMoviesDataSource: MoviesDataSource,

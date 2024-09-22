@@ -9,6 +9,7 @@ import com.example.data.movies.repositories.MoviesRepositoryImp
 import com.example.domain.repositories.MovieRepository
 import com.example.domain.usecase.SearchMoviesUseCase
 import com.example.movies.BuildConfig
+import com.example.movies.vm.MediaDetailViewModel
 import com.example.movies.vm.SearchMoviesViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -33,7 +34,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-fun featureModules() = listOf(mediaModule)
+fun featureModules() = listOf(mediaModule , mediaDetailModule)
 
 val AppModule = module {
     single { Dispatchers.IO }
@@ -117,4 +118,9 @@ val mediaModule = module {
     single { SearchMoviesUseCase(get()) }
 
     viewModel { SearchMoviesViewModel(get()) }
+}
+
+val mediaDetailModule = module {
+
+    viewModel { MediaDetailViewModel() }
 }

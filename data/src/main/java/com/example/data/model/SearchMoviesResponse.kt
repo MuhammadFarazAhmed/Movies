@@ -18,13 +18,13 @@ data class Result(
     @SerializedName("id")
     val id: Int = -1,
     @SerializedName("name")
-    val name: String?,
+    val name: String = "",
     @SerializedName("original_name")
     val originalName: String?,
     @SerializedName("media_type")
     val mediaType: String,
     @SerializedName("adult")
-    val adult: Boolean?,
+    val adult: Boolean = false,
     @SerializedName("popularity")
     val popularity: Double?,
     @SerializedName("gender")
@@ -38,7 +38,7 @@ data class Result(
     @SerializedName("backdrop_path")
     val backdropPath: String? = "",
     @SerializedName("overview")
-    val overview: String?,
+    val overview: String? = "",
     @SerializedName("poster_path")
     val posterPath: String?,
     @SerializedName("original_language")
@@ -65,9 +65,12 @@ data class Result(
 
 fun Result.toDomain() = Media(
     id,
+    name,
+    overview,
     video,
-    backdropPath.toString(),
-    mediaType
+    backdropPath,
+    mediaType,
+    adult
 )
 
 data class KnownFor(
@@ -86,7 +89,7 @@ data class KnownFor(
     @SerializedName("media_type")
     val mediaType: String = "",
     @SerializedName("adult")
-    val adult: Boolean?,
+    val adult: Boolean = false,
     @SerializedName("original_language")
     val originalLanguage: String?,
     @SerializedName("genre_ids")
@@ -103,9 +106,3 @@ data class KnownFor(
     val voteCount: Int?
 )
 
-fun KnownFor.toDomain() = Media(
-    id,
-    video,
-    backdropPath.toString(),
-    mediaType
-)

@@ -72,7 +72,6 @@ class SearchMoviesViewModel(
         val currentMedia = _uiState.value.media.toMutableMap()
 
         val newGroupedMedia = data.filter { media -> media.mediaType != "person" }
-            .sortedBy { media -> media.mediaType }
             .groupBy { media -> media.mediaType }
 
         newGroupedMedia.forEach { (mediaType, mediaList) ->
@@ -95,7 +94,7 @@ class SearchMoviesViewModel(
         _uiState.update {
             it.copy(
                 loading = false,
-                media = currentMedia,
+                media = currentMedia.toSortedMap(),
                 emptyView = currentMedia.isEmpty()
             )
         }

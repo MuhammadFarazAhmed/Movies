@@ -98,24 +98,19 @@ fun SearchView(
     }
 }
 
-
 @Composable
 fun LocalizeApp(language: String, content: @Composable () -> Unit) {
     val locale = Locale(language)
     val configuration = LocalConfiguration.current
     configuration.setLocale(locale)
-    val resources = LocalContext.current.resources
-    resources.updateConfiguration(configuration, resources.displayMetrics)
-
+    LocalContext.current.createConfigurationContext(configuration)
     CompositionLocalProvider(
         LocalLayoutDirection provides
                 if (LocalConfiguration.current.layoutDirection == LayoutDirection.Rtl.ordinal)
                     LayoutDirection.Rtl
                 else LayoutDirection.Ltr
     ) {
-
         content()
-
     }
 }
 

@@ -105,4 +105,3 @@ data class KnownFor(
     @SerializedName("vote_count")
     val voteCount: Int?
 )
-

@@ -12,7 +12,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlin.math.max
 import kotlin.math.min
 
 class MoviesRepositoryImp(
@@ -40,7 +39,7 @@ class MoviesRepositoryImp(
             var page = 2
 
             // Set MaxPageThreshold to prevent exhaustion of api calls.
-            val endPage = min(totalPages,maxPageThreshold)
+            val endPage = min(totalPages, maxPageThreshold)
             while (page <= endPage) {
                 val currentBatch =
                     fetchBatchPages(
@@ -54,7 +53,7 @@ class MoviesRepositoryImp(
                 emit(currentBatch)
 
                 // Move to the next batch of 10
-                page +=  10
+                page += 10
             }
         }
 

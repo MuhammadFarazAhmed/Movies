@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -27,7 +26,6 @@ class SearchMoviesViewModel(
 
     private val _uiState: MutableStateFlow<SearchMediaState> = MutableStateFlow(SearchMediaState())
     val uiState = _uiState.asStateFlow()
-
 
     fun onQueryChange(query: String) {
         //  if api is calling cancel it to call with new query
@@ -51,12 +49,10 @@ class SearchMoviesViewModel(
             query.debounce(500L)
                 .filter { it.isNotEmpty() } // Only proceed if query is not empty
                 .onEach { query ->
-                    if (query.isNotEmpty()) _uiState.update {
-                        it.copy(
-                            loading = true,
-
-                            defaultState = false
-                        )
+                    if (query.isNotEmpty()) {
+                        _uiState.update {
+                            it.copy(loading = true, defaultState = false)
+                        }
                     }
                 }
                 .collectLatest { query ->
@@ -79,18 +75,14 @@ class SearchMoviesViewModel(
             .sortedBy { media -> media.mediaType }
             .groupBy { media -> media.mediaType }
 
-
         newGroupedMedia.forEach { (mediaType, mediaList) ->
             if (mediaType == "movie") {
-
                 val adultMovies = mediaList.filter { it.adult ?: false }
                 val nonAdultMovies = mediaList.filterNot { it.adult ?: false }
-
 
                 if (adultMovies.isNotEmpty()) {
                     currentMedia["xxx"] = currentMedia["xxx"].orEmpty() + adultMovies
                 }
-
 
                 currentMedia["movie"] = currentMedia["movie"].orEmpty() + nonAdultMovies
             } else {

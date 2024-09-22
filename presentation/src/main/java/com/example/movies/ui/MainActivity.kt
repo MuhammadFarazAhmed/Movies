@@ -4,14 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -62,23 +60,22 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Serializable
 data object SearchMediaRoute
 
 @Serializable
 data class MediaDetailRoute(val media: Media)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun App(onLanguageChange: (lang: String) -> Unit) {
     val navController = rememberNavController()
 
-    Scaffold(modifier = Modifier.fillMaxSize(),
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             AppTopBar(onLanguageChange, navController)
-        }) { padding ->
-
+        }
+    ) { padding ->
         NavHost(
             modifier = Modifier.padding(padding),
             navController = navController,
@@ -95,7 +92,6 @@ private fun App(onLanguageChange: (lang: String) -> Unit) {
                     typeOf<Media>() to CustomNavType.MediaType
                 )
             ) {
-
                 val arguments = it.toRoute<MediaDetailRoute>()
                 MediaDetailsPage(arguments.media, navController)
             }
@@ -144,7 +140,8 @@ private fun AppTopBar(
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, tint = Color.White,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    tint = Color.White,
                     contentDescription = null
                 )
             }

@@ -34,7 +34,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-fun featureModules() = listOf(mediaModule , mediaDetailModule)
+fun featureModules() = listOf(mediaModule, mediaDetailModule)
 
 val AppModule = module {
     single { Dispatchers.IO }

@@ -5,7 +5,7 @@ import com.example.domain.model.Media
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MediaDetailViewModel() : ViewModel() {
+class MediaDetailViewModel : ViewModel() {
 
     private val _uiState: MutableStateFlow<MovieDetailsState> = MutableStateFlow(MovieDetailsState(Media()))
     val uiState = _uiState.asStateFlow()

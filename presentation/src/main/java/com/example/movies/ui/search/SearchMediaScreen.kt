@@ -38,7 +38,6 @@ import com.example.movies.common.SearchView
 import com.example.movies.vm.SearchMediaState
 import com.example.movies.vm.SearchMoviesViewModel
 
-
 @Composable
 fun SearchMediaPage(
     vm: SearchMoviesViewModel,
@@ -47,7 +46,6 @@ fun SearchMediaPage(
     val state by vm.uiState.collectAsState()
     SearchMediaScreen(state, vm, onclick)
 }
-
 
 @Composable
 fun SearchMediaScreen(
@@ -81,7 +79,6 @@ private fun Searchbar(vm: SearchMoviesViewModel) {
 
 @Composable
 private fun SearchList(state: SearchMediaState, onclick: (Media) -> Unit) {
-
     when {
         state.loading -> {
             LoaderFullScreen()
@@ -120,7 +117,6 @@ private fun SearchList(state: SearchMediaState, onclick: (Media) -> Unit) {
         }
     }
 }
-
 
 @Composable
 private fun CategoryHeading(category: String) {
@@ -189,9 +185,7 @@ fun SearchScreenPreview() {
                         Media(1, "", "", false, "/ksi3j.jpd", "movie", false)
                     )
                     item {
-                        Carousel(list) {
-
-                        }
+                        Carousel(list) {}
                     }
 
                     item {
@@ -204,13 +198,10 @@ fun SearchScreenPreview() {
                         Media(1, "", "", false, "/ksi3j.jpd", "movie", false)
                     )
                     item {
-                        Carousel(tv) {
-
-                        }
+                        Carousel(tv) {}
                     }
                 }
             }
         }
     }
 }
-

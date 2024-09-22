@@ -12,4 +12,3 @@ data class Media(
     val mediaType: String = "",
     val adult: Boolean? = false
 )
-

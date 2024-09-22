@@ -7,16 +7,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -34,8 +41,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import java.util.Locale
 
 @Composable
@@ -88,10 +98,13 @@ fun SearchView(
             singleLine = true,
             maxLines = 1,
             colors = TextFieldDefaults.colors(
-                cursorColor = colors.onPrimary,
+                cursorColor = MaterialTheme.colorScheme.onPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                selectionColors = TextSelectionColors(colors.onPrimary, colors.primaryVariant),
+                selectionColors = TextSelectionColors(
+                    MaterialTheme.colorScheme.onPrimary,
+                    MaterialTheme.colorScheme.primaryContainer
+                ),
             )
 
         )
@@ -128,14 +141,61 @@ fun LoaderFullScreen(
 }
 
 @Composable
-fun EmptyScreen(
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.Center
+@OptIn(ExperimentalMaterial3Api::class)
+fun AppTopBar(
+    showBackButton: Boolean = false,
+    onLanguageChange: (lang: String) -> Unit = {},
+    navController: NavHostController
 ) {
-    Box(
-        modifier.fillMaxSize(),
-        contentAlignment = alignment
-    ) {
-        CircularProgressIndicator()
-    }
+    var expanded by remember { mutableStateOf(false) }
+
+    TopAppBar(
+        title = {
+            Text(
+                text = "Search Movies , Tv Shows and more.",
+                style = TextStyle(fontSize = 16.sp, color = Color.White)
+            )
+        },
+        actions = {
+            IconButton(onClick = { expanded = true }) {
+                Icon(Icons.Filled.MoreVert, contentDescription = "More options", tint = Color.White)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text("English")
+                    },
+                    onClick = {
+                        onLanguageChange("en")
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text("Arabic")
+                    },
+                    onClick = {
+                        onLanguageChange("ar")
+                        expanded = false
+                    }
+                )
+            }
+        },
+        navigationIcon = {
+            if (showBackButton) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+                }
+            }
+        },
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFF2342)),
+    )
 }

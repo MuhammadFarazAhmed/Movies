@@ -34,8 +34,8 @@ fun EmptyStateView(
     icon: EmptyStateIcon = EmptyStateIcon(),
     title: String? = null,
     subtitle: String? = null,
-    titleTextSize: TextUnit = 22.sp,
-    subtitleTextSize: TextUnit = 20.sp,
+    titleTextSize: TextUnit = 18.sp,
+    subtitleTextSize: TextUnit = 14.sp,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
 ) {
@@ -74,7 +74,7 @@ fun EmptyStateView(
 data class EmptyStateIcon(
     @DrawableRes val iconRes: Int? = null,
     val size: Dp = 200.dp,
-    val spacing: Dp = 0.dp,
+    val spacing: Dp = 10.dp,
 )
 
 @Composable

@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import java.io.IOException
 
 suspend inline fun <reified T> makeApiCall(
     httpClient: HttpClient,
@@ -22,7 +23,7 @@ suspend inline fun <reified T> makeApiCall(
         else -> {
             val errorBody = response.bodyAsText()
             println("Error response: $errorBody")
-            throw Exception("API error: ${response.status.value} - $errorBody")
+            throw IOException("API error: ${response.status.value} - $errorBody")
         }
     }
 }

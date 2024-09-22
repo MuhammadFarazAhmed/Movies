@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,8 +31,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.SubcomposeAsyncImage
 import com.example.domain.model.Media
 import com.example.movies.BuildConfig
@@ -47,19 +44,17 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MediaDetailsPage(
     media: Media,
-    mainNavController: NavHostController,
     vm: MediaDetailViewModel = koinViewModel()
 ) {
     val state by vm.uiState.collectAsState()
     state.media = media
     Log.d("TAG", "MediaDetailsPage: $media")
-    MovieDetailsScreen(state, mainNavController)
+    MovieDetailsScreen(state)
 }
 
 @Composable
 fun MovieDetailsScreen(
-    state: MovieDetailsState,
-    appNavController: NavHostController
+    state: MovieDetailsState
 ) {
     var animationVisible by remember { mutableStateOf(false) }
 
@@ -112,7 +107,6 @@ fun MovieDetailsScreen(
                     .fillMaxWidth(1f),
             )
         }
-
     }
 }
 
@@ -153,7 +147,6 @@ private fun MovieDetailsScreenPreview() {
                     adult = false
                 )
             ),
-            rememberNavController()
         )
     }
 }

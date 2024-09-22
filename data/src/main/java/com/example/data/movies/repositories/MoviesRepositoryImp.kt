@@ -1,6 +1,5 @@
 package com.example.data.movies.repositories
 
-import android.util.Log
 import com.example.data.mapper.MovieMapper
 import com.example.data.model.Result
 import com.example.data.model.SearchMoviesInput

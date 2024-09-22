@@ -37,7 +37,7 @@ class SearchMoviesViewModel(
         this.query.value = query
 
         _uiState.update {
-            it.copy(loading = false, media = mapOf())
+            it.copy(media = mapOf())
         }
         if (query.isEmpty()) {
             _uiState.update { it.copy(defaultState = true) }

@@ -107,7 +107,7 @@ private fun SearchList(state: SearchMediaState, onclick: (Media) -> Unit) {
             )
         }
 
-        state.emptyView -> {
+        state.emptyView && !state.loading -> {
             EmptyStateView(
                 icon = EmptyStateIcon(R.drawable.bg_empty_no_result),
                 title = "No Results Found",

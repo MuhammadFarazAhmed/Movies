@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -64,4 +65,6 @@ dependencies {
 
     //Paging
     implementation(libs.paging.common.ktx)
+
+    implementation(libs.kotlinx.serialization.json)
 }

@@ -65,7 +65,7 @@ data class Result(
 
 fun Result.toDomain() = Media(
     id,
-    name,
+    if (mediaType == "tv") name else title,
     overview,
     video,
     backdropPath,

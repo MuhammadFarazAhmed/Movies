@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp") version libs.versions.ksp.get()
-    kotlin("plugin.serialization") version "1.7.0"
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -33,7 +33,7 @@ android {
         }
         debug {
             buildConfigField("String", "API_URL", "\"api.themoviedb.org\"")
-            buildConfigField("String", "IMAGE_BASE_URL", "\"https://image.tmdb.org/t/p/w200\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"https://image.tmdb.org/t/p/w500\"")
             buildConfigField("String", "TMDB_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NmFkMzRiZGU4NjM1MTVkNzE4YzYzZTY4OGMxYzE0NCIsIm5iZiI6MTcyNjcwMDg2MC4yOTgzNjUsInN1YiI6IjU3ZjkwMjZkYzNhMzY4NTA5NDAwMjM3NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rWqF5So6ptqs8dydFo_s6RTz_xMGZeVWcsCHL2LvApk\"")
         }
     }
@@ -134,6 +134,7 @@ dependencies {
 
     //Navigation
     implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     //Compose Icons
     implementation(libs.material.icons.extended)

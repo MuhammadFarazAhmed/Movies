@@ -13,6 +13,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.math.max
+import kotlin.math.min
 
 class MoviesRepositoryImp(
     private val movieMapper: MovieMapper,
@@ -39,7 +40,7 @@ class MoviesRepositoryImp(
             var page = 2
 
             // Set MaxPageThreshold to prevent exhaustion of api calls.
-            val endPage = if (totalPages <= maxPageThreshold) totalPages else maxPageThreshold
+            val endPage = min(totalPages,maxPageThreshold)
             while (page <= endPage) {
                 val currentBatch =
                     fetchBatchPages(
@@ -63,7 +64,6 @@ class MoviesRepositoryImp(
         startPage: Int,
         endPage: Int
     ): List<Result> = (startPage..endPage).map { page ->
-
         CoroutineScope(ioDispatcher).async {
             runCatching {
                 remoteMoviesDataSource.searchMovies(

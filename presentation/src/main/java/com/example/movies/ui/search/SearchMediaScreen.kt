@@ -2,6 +2,7 @@ package com.example.movies.ui.search
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,30 +27,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.domain.model.Media
 import com.example.movies.BuildConfig
 import com.example.movies.R
+import com.example.movies.common.EmptyStateIcon
+import com.example.movies.common.EmptyStateView
+import com.example.movies.common.LoaderFullScreen
 import com.example.movies.common.SearchView
+import com.example.movies.vm.SearchMediaState
 import com.example.movies.vm.SearchMoviesViewModel
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun SearchMediaPage(
-    navController: NavHostController,
-    vm: SearchMoviesViewModel = koinViewModel()
+    vm: SearchMoviesViewModel,
+    onclick: (media: Media) -> Unit,
 ) {
-    //val state by vm.uiState.collectAsState()
-    SearchMediaScreen(navController, vm)
+    val state by vm.uiState.collectAsState()
+    SearchMediaScreen(state, vm, onclick)
 }
 
 
 @Composable
 fun SearchMediaScreen(
-    navController: NavHostController,
-    vm: SearchMoviesViewModel
+    state: SearchMediaState,
+    vm: SearchMoviesViewModel,
+    onclick: (media: Media) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -57,7 +62,7 @@ fun SearchMediaScreen(
     ) {
         Column {
             Searchbar(vm)
-            SearchList(vm)
+            SearchList(state, onclick)
         }
     }
 }
@@ -75,29 +80,55 @@ private fun Searchbar(vm: SearchMoviesViewModel) {
 }
 
 @Composable
-private fun SearchList(vm: SearchMoviesViewModel) {
-    val media = vm.media.collectAsState()
-    LazyColumn {
-        media.value.forEach { (mediaType, mediaList) ->
-            item {
-                Category(mediaType)
-            }
+private fun SearchList(state: SearchMediaState, onclick: (Media) -> Unit) {
 
-            item {
-                Carousel(mediaList)
+    when {
+        state.loading -> {
+            LoaderFullScreen()
+        }
+
+        state.media.isNotEmpty() -> {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                state.media.forEach { (mediaType, mediaList) ->
+                    item {
+                        CategoryHeading(mediaType)
+                    }
+
+                    item {
+                        Carousel(mediaList = mediaList, onclick)
+                    }
+                }
             }
+        }
+
+        state.defaultState -> {
+            EmptyStateView(
+                icon = EmptyStateIcon(R.drawable.bg_empty_search),
+                title = "Search Movies, tv and more",
+                subtitle = "",
+                verticalArrangement = Arrangement.Center
+            )
+        }
+
+        state.emptyView -> {
+            EmptyStateView(
+                icon = EmptyStateIcon(R.drawable.bg_empty_no_result),
+                title = "No Results Found",
+                subtitle = "Search with different keyword",
+                verticalArrangement = Arrangement.Center
+            )
         }
     }
 }
 
 
 @Composable
-private fun Category(category: String) {
+private fun CategoryHeading(category: String) {
     Text(
         modifier = Modifier.padding(12.dp),
         text = category,
         style = TextStyle(
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
@@ -105,13 +136,13 @@ private fun Category(category: String) {
 }
 
 @Composable
-private fun Carousel(list: List<Media>) {
+private fun Carousel(mediaList: List<Media>, onclick: (media: Media) -> Unit) {
     LazyRow(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(list.size) { index ->
-            CarousalItem(list, index)
+        items(mediaList.size) { index ->
+            CarousalItem(mediaList, index, onclick)
         }
     }
 }
@@ -119,13 +150,17 @@ private fun Carousel(list: List<Media>) {
 @Composable
 private fun CarousalItem(
     mediaList: List<Media>,
-    index: Int
+    index: Int,
+    onclick: (media: Media) -> Unit
 ) {
     AsyncImage(
         modifier = Modifier
             .padding(vertical = 12.dp)
             .size(200.dp, 120.dp)
-            .clip(RoundedCornerShape(8.dp)),
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+                onclick(mediaList[index])
+            },
         model = BuildConfig.IMAGE_BASE_URL + mediaList[index].backdropPath,
         contentDescription = "",
         contentScale = ContentScale.Crop,
@@ -145,7 +180,7 @@ fun SearchScreenPreview() {
 
                 LazyColumn {
                     item {
-                        Category("Movies")
+                        CategoryHeading("Movies")
                     }
 
                     val list = listOf(
@@ -154,7 +189,24 @@ fun SearchScreenPreview() {
                         Media(1, "", "", false, "/ksi3j.jpd", "movie", false)
                     )
                     item {
-                        Carousel(list)
+                        Carousel(list) {
+
+                        }
+                    }
+
+                    item {
+                        CategoryHeading("Tv")
+                    }
+
+                    val tv = listOf(
+                        Media(1, "", "", false, "/ksi3j.jpd", "movie", false),
+                        Media(1, "", "", false, "/ksi3j.jpd", "movie", false),
+                        Media(1, "", "", false, "/ksi3j.jpd", "movie", false)
+                    )
+                    item {
+                        Carousel(tv) {
+
+                        }
                     }
                 }
             }

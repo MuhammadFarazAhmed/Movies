@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.domain.model.Media
 import com.example.movies.BuildConfig
 import com.example.movies.R
@@ -49,9 +52,7 @@ fun SearchMediaPage(
 
 @Composable
 fun SearchMediaScreen(
-    state: SearchMediaState,
-    vm: SearchMoviesViewModel,
-    onclick: (media: Media) -> Unit
+    state: SearchMediaState, vm: SearchMoviesViewModel, onclick: (media: Media) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -67,14 +68,11 @@ fun SearchMediaScreen(
 
 @Composable
 private fun Searchbar(vm: SearchMoviesViewModel) {
-    SearchView(
-        onQueryChange = {
-            vm.onQueryChange(it)
-        },
-        onBackClick = {
-            vm.onQueryChange("")
-        }
-    )
+    SearchView(onQueryChange = {
+        vm.onQueryChange(it)
+    }, onBackClick = {
+        vm.onQueryChange("")
+    })
 }
 
 @Composable
@@ -121,9 +119,7 @@ private fun SearchList(state: SearchMediaState, onclick: (Media) -> Unit) {
 @Composable
 private fun CategoryHeading(category: String) {
     Text(
-        modifier = Modifier.padding(12.dp),
-        text = category,
-        style = TextStyle(
+        modifier = Modifier.padding(12.dp), text = category, style = TextStyle(
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
@@ -133,6 +129,7 @@ private fun CategoryHeading(category: String) {
 
 @Composable
 private fun Carousel(mediaList: List<Media>, onclick: (media: Media) -> Unit) {
+
     LazyRow(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -145,9 +142,7 @@ private fun Carousel(mediaList: List<Media>, onclick: (media: Media) -> Unit) {
 
 @Composable
 private fun CarousalItem(
-    mediaList: List<Media>,
-    index: Int,
-    onclick: (media: Media) -> Unit
+    mediaList: List<Media>, index: Int, onclick: (media: Media) -> Unit
 ) {
     AsyncImage(
         modifier = Modifier
@@ -157,7 +152,12 @@ private fun CarousalItem(
             .clickable {
                 onclick(mediaList[index])
             },
-        model = BuildConfig.IMAGE_BASE_URL + mediaList[index].backdropPath,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(BuildConfig.IMAGE_BASE_URL + mediaList[index].backdropPath)
+            .diskCachePolicy(CachePolicy.ENABLED) // Use disk cache
+            .memoryCachePolicy(CachePolicy.ENABLED) // Use memory cache
+            .networkCachePolicy(CachePolicy.READ_ONLY) // Cache only
+            .build(),
         contentDescription = "",
         contentScale = ContentScale.Crop,
         placeholder = painterResource(R.drawable.placeholder),

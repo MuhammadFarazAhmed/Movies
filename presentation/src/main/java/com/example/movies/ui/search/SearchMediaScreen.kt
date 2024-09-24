@@ -130,19 +130,27 @@ private fun CategoryHeading(category: String) {
 @Composable
 private fun Carousel(mediaList: List<Media>, onclick: (media: Media) -> Unit) {
 
+    val imageRequest = ImageRequest.Builder(LocalContext.current)
+        .diskCachePolicy(CachePolicy.ENABLED) // Use disk cache
+        .memoryCachePolicy(CachePolicy.ENABLED) // Use memory cache
+        .networkCachePolicy(CachePolicy.READ_ONLY) // Cache only
+
     LazyRow(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(mediaList.size) { index ->
-            CarousalItem(mediaList, index, onclick)
+            CarousalItem(mediaList, index, imageRequest, onclick)
         }
     }
 }
 
 @Composable
 private fun CarousalItem(
-    mediaList: List<Media>, index: Int, onclick: (media: Media) -> Unit
+    mediaList: List<Media>,
+    index: Int,
+    imageRequest: ImageRequest.Builder,
+    onclick: (media: Media) -> Unit
 ) {
     AsyncImage(
         modifier = Modifier
@@ -152,11 +160,7 @@ private fun CarousalItem(
             .clickable {
                 onclick(mediaList[index])
             },
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(BuildConfig.IMAGE_BASE_URL + mediaList[index].backdropPath)
-            .diskCachePolicy(CachePolicy.ENABLED) // Use disk cache
-            .memoryCachePolicy(CachePolicy.ENABLED) // Use memory cache
-            .networkCachePolicy(CachePolicy.READ_ONLY) // Cache only
+        model = imageRequest.data(BuildConfig.IMAGE_BASE_URL + mediaList[index].backdropPath)
             .build(),
         contentDescription = "",
         contentScale = ContentScale.Crop,

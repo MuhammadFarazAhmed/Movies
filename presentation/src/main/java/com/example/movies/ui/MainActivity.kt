@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.movies.common.AppTopBar
 import com.example.movies.common.LocalizeApp
 import com.example.movies.theme.MoviesTheme
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,15 +24,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MoviesTheme {
-                var language by remember { mutableStateOf("") }
-                LocalizeApp(language) { // change this language to ar to se the RTL layout
+                val localeState = rememberAppLocale("en")
+                LocalizeApp(localeState) { // change this language to ar to se the RTL layout
                     App(onLanguageChange = {
-                        language = it
+                        localeState.value = Locale(it)
                     })
                 }
             }
         }
     }
+}
+
+@Composable
+fun rememberAppLocale(initialLanguage: String): MutableState<Locale> {
+    return remember { mutableStateOf(Locale(initialLanguage)) }
 }
 
 @Composable

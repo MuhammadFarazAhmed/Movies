@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Movies</string>
+    <string name="search_movies">Search Movies , Tv Shows and more.</string>
 </resources>

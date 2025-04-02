@@ -1,5 +1,6 @@
 package com.example.movies.common
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,11 +43,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.drawable.DrawableCompat.setLayoutDirection
 import androidx.navigation.NavHostController
+import com.example.movies.R
 import java.util.Locale
 
 @Composable
@@ -112,16 +117,19 @@ fun SearchView(
 }
 
 @Composable
-fun LocalizeApp(language: String, content: @Composable () -> Unit) {
-    val locale = Locale(language)
-    val configuration = LocalConfiguration.current
-    configuration.setLocale(locale)
-    LocalContext.current.createConfigurationContext(configuration)
+fun LocalizeApp(localeState: MutableState<Locale>, content: @Composable () -> Unit) {
+    val context = LocalContext.current
+    val configuration = Configuration(context.resources.configuration).apply {
+        setLocale(localeState.value)
+        setLayoutDirection(localeState.value)
+    }
+
+    val localizedContext = context.createConfigurationContext(configuration)
+
     CompositionLocalProvider(
-        LocalLayoutDirection provides
-                if (LocalConfiguration.current.layoutDirection == LayoutDirection.Rtl.ordinal)
-                    LayoutDirection.Rtl
-                else LayoutDirection.Ltr
+        LocalContext provides localizedContext,
+        LocalLayoutDirection provides if (localeState.value.language == "ar")
+            LayoutDirection.Rtl else LayoutDirection.Ltr
     ) {
         content()
     }
@@ -152,7 +160,7 @@ fun AppTopBar(
     TopAppBar(
         title = {
             Text(
-                text = "Search Movies , Tv Shows and more.",
+                text = stringResource(R.string.search_movies),
                 style = TextStyle(fontSize = 16.sp, color = Color.White)
             )
         },

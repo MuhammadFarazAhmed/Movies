@@ -165,32 +165,7 @@ fun AppTopBar(
             )
         },
         actions = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(Icons.Filled.MoreVert, contentDescription = "More options", tint = Color.White)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = {
-                        Text("English")
-                    },
-                    onClick = {
-                        onLanguageChange("en")
-                        expanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = {
-                        Text("Arabic")
-                    },
-                    onClick = {
-                        onLanguageChange("ar")
-                        expanded = false
-                    }
-                )
-            }
+            LanguageDropdown(expanded, onExpandedChange = { expanded = it }, onLanguageChange)
         },
         navigationIcon = {
             if (showBackButton) {
@@ -206,4 +181,35 @@ fun AppTopBar(
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFF2342)),
     )
+}
+
+@Composable
+fun LanguageDropdown(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onLanguageChange: (String) -> Unit
+) {
+    IconButton(onClick = { onExpandedChange(true) }) {
+        Icon(Icons.Filled.MoreVert, contentDescription = "More options", tint = Color.White)
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { onExpandedChange(false) }
+    ) {
+        DropdownMenuItem(
+            text = { Text("English") },
+            onClick = {
+                onLanguageChange("en")
+                onExpandedChange(false)
+            }
+        )
+        DropdownMenuItem(
+            text = { Text("Arabic") },
+            onClick = {
+                onLanguageChange("ar")
+                onExpandedChange(false)
+            }
+        )
+    }
 }
